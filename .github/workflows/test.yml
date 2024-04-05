@@ -41,13 +41,13 @@ jobs:
       - run: docker compose up -d
 
       - name: Lint
-        run: docker compose exec -T backend -w /app hatch fmt --check
+        run: docker compose exec -T -w /app backend hatch fmt --check
 
       - name: Types
-        run: docker compose exec -T backend -w /app hatch run types:check
+        run: docker compose exec -T -w /app backend hatch run types:check
         
       - name: Run tests
-        run: docker compose exec -T backend -w /app hatch run cov "Coverage for ${{ github.sha }}"
+        run: docker compose exec -T -w /app backend hatch run cov "Coverage for ${{ github.sha }}"
 
       - run: docker compose down -v --remove-orphans
       - name: Store coverage files
