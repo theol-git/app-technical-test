@@ -1,4 +1,4 @@
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 from contextlib import ExitStack
 from typing import TypeVar
 
@@ -12,18 +12,22 @@ from app.main import app as actual_app
 
 T = TypeVar("T")
 
+YieldFixture = Generator[T, None, None]
 AsyncYieldFixture = AsyncGenerator[T, None]
 
 
 @pytest.fixture(autouse=True)
-def app() -> FastAPI:
+def app() -> YieldFixture[FastAPI]:
     with ExitStack():
         yield actual_app
 
 
 @pytest.fixture
 async def client(app: FastAPI) -> AsyncYieldFixture[AsyncClient]:
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+    async with AsyncClient(
+        transport=ASGITransport(app=app),  # type: ignore
+        base_url="http://test",
+    ) as c:
         yield c
 
 
@@ -39,5 +43,5 @@ async def transactional_session() -> AsyncYieldFixture[AsyncSession]:
 
 
 @pytest.fixture(scope="function")
-async def db_session(transactional_session) -> AsyncYieldFixture[AsyncSession]:
-    return transactional_session
+async def db_session(transactional_session: AsyncSession) -> AsyncYieldFixture[AsyncSession]:
+    yield transactional_session
