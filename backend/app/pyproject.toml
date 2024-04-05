@@ -112,7 +112,7 @@ line_length = 88
 [tool.mypy]
 strict = true
 exclude = ["venv", "alembic"]
-plugins = "sqlalchemy.ext.mypy.plugin, pydantic.mypy"
+plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
 ignore_missing_imports = true
 disallow_untyped_defs = true
 
