@@ -1,4 +1,4 @@
-from pydantic import PostgresDsn, ValidationInfo, field_validator
+from pydantic import AnyHttpUrl, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -26,6 +26,8 @@ class Settings(BaseSettings):
             host=info.data.get("POSTGRES_SERVER"),
             path=info.data.get("POSTGRES_DB", ""),
         )
+
+    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
 
     ECHO_SQL_QUERIES: bool = True
 
