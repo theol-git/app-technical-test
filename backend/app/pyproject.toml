@@ -1,0 +1,138 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "app"
+dynamic = ["version"]
+description = "A simple FastAPI project for managing contacts for Descartes Underwriting technical test."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Theo", email = "theo.lettermann@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "inboard[fastapi]==0.66.*",
+  "celery>=5.2.7",
+  "pydantic>=2.0",
+  "pydantic-settings>=2.0.3",
+]
+
+[project.urls]
+Documentation = "https://github.com/theol-git/app-technical-test/backend/app#readme"
+Source = "https://github.com/theol-git/app-technical-test/backend/app"
+
+[tool.hatch.version]
+path = "app/__about__.py"
+
+[dirs.env]
+virtual = "./.venv"
+
+[tool.hatch.envs.default]
+dev-mode = true
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest",
+  "pytest-asyncio",
+  "pre-commit",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.11", "3.12"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/app"]  # for docker compataability
+
+[tool.hatch.envs.production]
+dev-mode = false
+features = []
+path = ".venv"
+
+[tool.hatch.envs.types]
+dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:app tests}"
+
+[tool.coverage.run]
+source_pkgs = ["app", "tests"]
+branch = true
+parallel = true
+omit = [
+  "app/__about__.py",
+]
+
+[tool.coverage.paths]
+app = ["app", "*/app/app"]
+tests = ["tests", "*/app/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.hatch.envs.lint]
+detached = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
+
+[tool.mypy]
+strict = true
+exclude = ["venv"]
+plugins = "pydantic.mypy"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "W191",  # indentation contains tabs
+    "B904",  # Allow raising exceptions without from e, for HTTPException
+]
+
+[tool.ruff.lint.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`.
+keep-runtime-typing = true
