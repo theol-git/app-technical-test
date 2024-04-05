@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format-hatch
+        name: hatch-ruff
+        language: system
+        entry: bash -c 'cd backend/app && exec hatch fmt'
+        pass_filenames: false
+        verbose: true
+      - id: mypy-types-hatch
+        name: hatch-mypy
+        language: system
+        entry: bash -c 'cd backend/app && exec hatch run types:check'
+        pass_filenames: false
+        verbose: true

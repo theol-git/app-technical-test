@@ -1,0 +1,17 @@
+services:
+  backend:
+    ports:
+      - "8888:8888"
+      - "8080:80"
+    volumes:
+      - ./backend/app/app:/app/app
+    environment:
+      - JUPYTER=jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.custom_display_url=http://127.0.0.1:8888
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        BACKEND_APP_MODULE: ${BACKEND_APP_MODULE-app.main:app}
+        BACKEND_PRE_START_PATH: ${BACKEND_PRE_START_PATH-/app/prestart.sh}
+        BACKEND_WITH_RELOAD: ${BACKEND_WITH_RELOAD-true}
+        INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
