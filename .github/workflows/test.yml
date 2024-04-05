@@ -43,6 +43,9 @@ jobs:
       - name: Lint
         run: docker compose exec -T backend hatch fmt --check
 
+      - name: Types
+        run: docker compose exec -T backend hatch run types:check
+        
       - name: Run tests
         run: docker compose exec -T backend hatch run cov "Coverage for ${{ github.sha }}"
 
