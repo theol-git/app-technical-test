@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: ['3.11', '3.12']
 
     steps:
@@ -41,13 +41,13 @@ jobs:
       - run: docker compose up -d
 
       - name: Lint
-        run: docker compose exec -T backend hatch fmt --check
+        run: docker compose exec -T backend -w /app hatch fmt --check
 
       - name: Types
-        run: docker compose exec -T backend hatch run types:check
+        run: docker compose exec -T backend -w /app hatch run types:check
         
       - name: Run tests
-        run: docker compose exec -T backend hatch run cov "Coverage for ${{ github.sha }}"
+        run: docker compose exec -T backend -w /app hatch run cov "Coverage for ${{ github.sha }}"
 
       - run: docker compose down -v --remove-orphans
       - name: Store coverage files
