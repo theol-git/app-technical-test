@@ -47,7 +47,7 @@ jobs:
         run: docker compose exec -T -w /app backend hatch run types:check
         
       - name: Run tests
-        run: docker compose exec -T -w /app backend hatch run cov "Coverage for ${{ github.sha }}"
+        run: docker compose exec -T -w /app backend hatch run cov
 
       - run: docker compose down -v --remove-orphans
       - name: Store coverage files
