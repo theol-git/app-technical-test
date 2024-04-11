@@ -29,5 +29,16 @@ services:
         BACKEND_WITH_RELOAD: ${BACKEND_WITH_RELOAD-false}
         INSTALL_DEV: ${INSTALL_DEV-false}
 
+  frontend:
+    image: "${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}"
+    env_file:
+      - .env
+      - frontend/.env.local
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+
 volumes:
   app-db-data:

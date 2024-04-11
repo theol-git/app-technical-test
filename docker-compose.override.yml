@@ -15,3 +15,21 @@ services:
         BACKEND_PRE_START_PATH: ${BACKEND_PRE_START_PATH-/app/prestart.sh}
         BACKEND_WITH_RELOAD: ${BACKEND_WITH_RELOAD-true}
         INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
+  frontend:
+    ports:
+      - "3000:3000"
+    volumes:
+      # https://stackoverflow.com/a/32785014
+      - ./frontend:/frontend
+      - node_modules:/frontend/node_modules
+    build:
+      context: ./frontend
+      args:
+        - NODE_ENV=development
+    environment:
+      - NEXT_PUBLIC_BACKEND_API_URL=http://localhost:8080/api/v1
+
+volumes:
+  node_modules:
+
+
